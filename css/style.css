@@ -960,4 +960,239 @@ main {
     .student-info p {
         font-size: 11px;
     }
+
+/* ========================================
+   FICHA DO ALUNO
+======================================== */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.page-header h1 {
+    margin: 14px 0 6px;
+    font-size: 30px;
+    font-weight: 700;
+    color: #17211d;
+}
+
+.page-header p {
+    margin: 0;
+    color: #6b756f;
+}
+
+.back-button {
+    border: 0;
+    background: transparent;
+    color: #10b981;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.student-profile-card {
+    background: #ffffff;
+    border: 1px solid #e5e9e7;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.profile-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: #ecfdf5;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.profile-main h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    color: #17211d;
+}
+
+.profile-main p {
+    margin: 0;
+    color: #6b756f;
+}
+
+.info-section {
+    margin-bottom: 32px;
+}
+
+.section-title {
+    margin-bottom: 16px;
+}
+
+.section-title h2 {
+    margin: 0 0 5px;
+    font-size: 20px;
+    color: #17211d;
+}
+
+.section-title p {
+    margin: 0;
+    color: #7a847e;
+    font-size: 14px;
+}
+
+.diagnoses-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+.diagnosis-card {
+    background: #ffffff;
+    border: 1px solid #e5e9e7;
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.diagnosis-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #ecfdf5;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.diagnosis-card h3 {
+    margin: 0 0 5px;
+    font-size: 15px;
+    color: #17211d;
+}
+
+.diagnosis-card p {
+    margin: 0;
+    color: #6b756f;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.records-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.record-card {
+    background: #ffffff;
+    border: 1px solid #e5e9e7;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.record-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid #edf0ee;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.record-date {
+    color: #059669;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.record-header h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #17211d;
+}
+
+.record-professional {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.record-professional strong {
+    font-size: 14px;
+    color: #37413c;
+}
+
+.record-professional span {
+    font-size: 12px;
+    color: #7a847e;
+}
+
+.record-content {
+    padding: 20px 22px;
+}
+
+.record-field {
+    margin-bottom: 18px;
+}
+
+.record-field:last-child {
+    margin-bottom: 0;
+}
+
+.record-field strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #37413c;
+}
+
+.record-field p {
+    margin: 0;
+    color: #626c66;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+.empty-message {
+    background: #ffffff;
+    border: 1px dashed #d9dfdc;
+    border-radius: 14px;
+    padding: 28px;
+    text-align: center;
+    color: #7a847e;
+}
+
+@media (max-width: 700px) {
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .record-header {
+        flex-direction: column;
+    }
+
+    .record-professional {
+        text-align: left;
+    }
+
 }
