@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - Alunos</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+
+        <div class="brand-section">
+
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+            </div>
+
+            <div>
+                <div class="brand-title">
+                    Núcleo de Apoio Educacional e Inclusivo
+                </div>
+
+                <div class="brand-subtitle">
+                    Prontuários compartilhados
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="user-section">
+
+            <div class="user-info">
+
+                <div class="user-name" id="user-name">
+                    Carregando...
+                </div>
+
+                <div class="user-role" id="user-role">
+                    Carregando...
+                </div>
+
+            </div>
+
+
+            <button
+                class="logout-btn"
+                id="logout-btn"
+                title="Sair"
+            >
+
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+
+                    <polyline points="16 17 21 12 16 7"></polyline>
+
+                    <line
+                        x1="21"
+                        y1="12"
+                        x2="9"
+                        y2="12"
+                    ></line>
+                </svg>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- Main -->
+
+    <main>
+
+        <div class="dashboard-header">
+
+            <div class="title-group">
+
+                <h1>Alunos</h1>
+
+                <p>
+                    Selecione um aluno para abrir o prontuário.
+                </p>
+
+            </div>
+
+
+            <div class="actions-group">
+
+                <div class="search-box">
+
+                    <svg viewBox="0 0 24 24">
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="8"
+                        ></circle>
+
+                        <line
+                            x1="21"
+                            y1="21"
+                            x2="16.65"
+                            y2="16.65"
+                        ></line>
+                    </svg>
+
+                    <input
+                        type="text"
+                        id="search-student"
+                        placeholder="Buscar aluno..."
+                    >
+
+                </div>
+
+
+                <button
+                    class="new-student-btn"
+                    id="new-student-btn"
+                >
+                    + Novo Aluno
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Lista de alunos -->
+
+        <div
+            class="students-grid"
+            id="students-grid"
+        >
+
+            <div class="loading-message">
+                Carregando alunos...
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- Supabase -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/dashboard.js"></script>
+
+</body>
+</html>
