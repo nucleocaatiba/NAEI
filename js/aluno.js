@@ -1,218 +1,267 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+const form = document.getElementById("student-form");
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+const fullNameInput = document.getElementById("full-name");
+const birthDateInput = document.getElementById("birth-date");
+const diagnosisSelect = document.getElementById("diagnosis");
+const diagnosisLevelInput = document.getElementById("diagnosis-level");
+const notesInput = document.getElementById("student-notes");
 
-    <title>Aluno - NAEI</title>
+const message = document.getElementById("form-message");
+const saveButton = document.getElementById("save-student");
 
-    <link rel="stylesheet" href="css/style.css">
-</head>
+const userName = document.getElementById("user-name");
+const userRole = document.getElementById("user-role");
+const logoutButton = document.getElementById("logout-btn");
 
-<body>
 
-<header>
+async function init() {
 
-    <div class="brand-section">
+    const {
+        data: { user },
+        error
+    } = await supabaseClient.auth.getUser();
 
-        <div class="brand-icon">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-            </svg>
-        </div>
+    if (error || !user) {
 
-        <div>
-            <div class="brand-title">
-                Núcleo de Apoio Educacional e Inclusivo
-            </div>
+        window.location.href = "index.html";
 
-            <div class="brand-subtitle">
-                Prontuários compartilhados
-            </div>
-        </div>
+        return;
+    }
 
-    </div>
+    await loadProfile(user.id);
 
-    <div class="user-section">
+    await loadDiagnoses();
 
-        <div class="user-info">
+}
 
-            <div class="user-name" id="user-name">
-                Carregando...
-            </div>
 
-            <div class="user-role" id="user-role">
-                Carregando...
-            </div>
+async function loadProfile(userId) {
 
-        </div>
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("full_name, profession")
+        .eq("id", userId)
+        .single();
 
-        <button class="logout-btn" id="logout-btn" title="Sair">
+    if (error) {
 
-            <svg viewBox="0 0 24 24">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16 17 21 12 16 7"></polyline>
-                <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
+        console.error("Erro ao carregar perfil:", error);
 
-        </button>
+        userName.textContent = "Profissional";
+        userRole.textContent = "";
 
-    </div>
+        return;
+    }
 
-</header>
+    userName.textContent = data.full_name;
+    userRole.textContent = data.profession;
 
+}
 
-<main>
 
-    <div class="page-header">
+async function loadDiagnoses() {
 
-        <div>
+    const { data, error } = await supabaseClient
+        .from("diagnoses")
+        .select("id, name")
+        .order("name", { ascending: true });
 
-            <button
-                type="button"
-                class="back-button"
-                onclick="window.location.href='dashboard.html'">
+    if (error) {
 
-                ← Voltar para alunos
+        console.error("Erro ao carregar diagnósticos:", error);
 
-            </button>
+        return;
+    }
 
-            <h1 id="page-title">
-                Novo aluno
-            </h1>
+    diagnosisSelect.innerHTML = `
+        <option value="">
+            Nenhum diagnóstico informado
+        </option>
+    `;
 
-            <p>
-                Cadastre os dados básicos do aluno.
-            </p>
+    data.forEach(diagnosis => {
 
-        </div>
+        const option = document.createElement("option");
 
-    </div>
+        option.value = diagnosis.id;
 
+        option.textContent = diagnosis.name;
 
-    <section class="form-card">
+        diagnosisSelect.appendChild(option);
 
-        <form id="student-form">
+    });
 
-            <div class="form-grid">
+}
 
-                <div class="form-group form-full">
 
-                    <label for="full-name">
-                        Nome completo
-                    </label>
+form.addEventListener("submit", async function(event) {
 
-                    <input
-                        type="text"
-                        id="full-name"
-                        placeholder="Digite o nome completo"
-                        required>
+    event.preventDefault();
 
-                </div>
+    clearMessage();
 
+    const fullName = fullNameInput.value.trim();
+    const birthDate = birthDateInput.value || null;
+    const notes = notesInput.value.trim() || null;
 
-                <div class="form-group">
+    const diagnosisId = diagnosisSelect.value || null;
+    const diagnosisLevel = diagnosisLevelInput.value.trim() || null;
 
-                    <label for="birth-date">
-                        Data de nascimento
-                    </label>
 
-                    <input
-                        type="date"
-                        id="birth-date">
+    if (!fullName) {
 
-                </div>
+        showMessage(
+            "Digite o nome completo do aluno.",
+            "error"
+        );
 
+        return;
+    }
 
-                <div class="form-group">
 
-                    <label for="diagnosis">
-                        Diagnóstico
-                    </label>
+    saveButton.disabled = true;
 
-                    <select id="diagnosis">
+    saveButton.textContent = "Salvando...";
 
-                        <option value="">
-                            Nenhum diagnóstico informado
-                        </option>
 
-                    </select>
+    try {
 
-                </div>
+        /*
+         * 1. Criar aluno
+         */
 
+        const { data: student, error: studentError } =
+            await supabaseClient
+                .from("students")
+                .insert({
+                    full_name: fullName,
+                    birth_date: birthDate,
+                    notes: notes
+                })
+                .select()
+                .single();
 
-                <div class="form-group">
 
-                    <label for="diagnosis-level">
-                        Nível / especificação
-                    </label>
+        if (studentError) {
 
-                    <input
-                        type="text"
-                        id="diagnosis-level"
-                        placeholder="Ex.: nível 1">
+            console.error(
+                "Erro ao cadastrar aluno:",
+                studentError
+            );
 
-                </div>
+            throw new Error(
+                "Não foi possível cadastrar o aluno."
+            );
+        }
 
 
-                <div class="form-group form-full">
+        /*
+         * 2. Se houver diagnóstico,
+         * criar vínculo com o aluno
+         */
 
-                    <label for="student-notes">
-                        Observações
-                    </label>
+        if (diagnosisId) {
 
-                    <textarea
-                        id="student-notes"
-                        rows="5"
-                        placeholder="Informações importantes sobre o aluno..."></textarea>
+            const { error: diagnosisError } =
+                await supabaseClient
+                    .from("student_diagnoses")
+                    .insert({
 
-                </div>
+                        student_id: student.id,
 
-            </div>
+                        diagnosis_id: diagnosisId,
 
+                        level: diagnosisLevel
 
-            <div
-                id="form-message"
-                class="form-message">
-            </div>
+                    });
 
 
-            <div class="form-actions">
+            if (diagnosisError) {
 
-                <button
-                    type="button"
-                    class="cancel-button"
-                    onclick="window.location.href='dashboard.html'">
+                console.error(
+                    "Erro ao salvar diagnóstico:",
+                    diagnosisError
+                );
 
-                    Cancelar
+                throw new Error(
+                    "Aluno criado, mas não foi possível salvar o diagnóstico."
+                );
+            }
 
-                </button>
+        }
 
-                <button
-                    type="submit"
-                    class="new-student-btn"
-                    id="save-student">
 
-                    Salvar aluno
+        showMessage(
+            "Aluno cadastrado com sucesso!",
+            "success"
+        );
 
-                </button>
 
-            </div>
+        setTimeout(() => {
 
-        </form>
+            window.location.href =
+                `aluno.html?id=${student.id}`;
 
-    </section>
+        }, 700);
 
-</main>
 
+    } catch (error) {
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        console.error(error);
 
-<script src="js/supabase.js"></script>
+        showMessage(
+            error.message ||
+            "Ocorreu um erro ao salvar o aluno.",
+            "error"
+        );
 
-<script src="js/aluno.js"></script>
 
-</body>
+        saveButton.disabled = false;
 
-</html>
+        saveButton.textContent = "Salvar aluno";
+
+    }
+
+});
+
+
+function showMessage(text, type) {
+
+    message.textContent = text;
+
+    message.className =
+        `form-message ${type}`;
+
+}
+
+
+function clearMessage() {
+
+    message.textContent = "";
+
+    message.className = "form-message";
+
+}
+
+
+logoutButton.addEventListener("click", async function() {
+
+    const { error } =
+        await supabaseClient.auth.signOut();
+
+    if (error) {
+
+        console.error(
+            "Erro ao sair:",
+            error
+        );
+
+        return;
+    }
+
+    window.location.href = "index.html";
+
+});
+
+
+init();
