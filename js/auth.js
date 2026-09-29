@@ -1,13 +1,33 @@
 const loginForm = document.getElementById("login-form");
 
-loginForm.addEventListener("submit", function (event) {
+loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
-    console.log("E-mail:", email);
-    console.log("Senha:", password);
+    const button = loginForm.querySelector("button");
 
-    alert("Login ainda não conectado ao Supabase.");
+    button.disabled = true;
+    button.textContent = "Entrando...";
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        console.error("Erro no login:", error);
+
+        alert("E-mail ou senha incorretos.");
+
+        button.disabled = false;
+        button.textContent = "Entrar";
+
+        return;
+    }
+
+    console.log("Usuário autenticado:", data.user);
+
+    window.location.href = "dashboard.html";
 });
