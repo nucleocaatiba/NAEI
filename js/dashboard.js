@@ -3,15 +3,37 @@
 // ========================================
 
 
-// Elementos da página
+// ========================================
+// ELEMENTOS DA PÁGINA
+// ========================================
+
 const studentsGrid = document.getElementById("students-grid");
 const searchInput = document.getElementById("search-student");
 const userName = document.getElementById("user-name");
 const userRole = document.getElementById("user-role");
 const logoutButton = document.getElementById("logout-btn");
+const newStudentButton = document.getElementById("new-student-btn");
 
 
-// Guarda todos os alunos carregados
+// ========================================
+// BOTÃO NOVO ALUNO
+// ========================================
+
+if (newStudentButton) {
+
+    newStudentButton.addEventListener("click", function () {
+
+        window.location.href = "aluno.html";
+
+    });
+
+}
+
+
+// ========================================
+// GUARDA TODOS OS ALUNOS CARREGADOS
+// ========================================
+
 let students = [];
 
 
@@ -21,14 +43,13 @@ let students = [];
 
 async function initDashboard() {
 
-    // Verifica se existe usuário logado
     const {
         data: { user },
         error: sessionError
     } = await supabaseClient.auth.getUser();
 
 
-    // Se não estiver logado, volta para o login
+    // Usuário não está logado
     if (sessionError || !user) {
 
         window.location.href = "index.html";
@@ -37,7 +58,7 @@ async function initDashboard() {
     }
 
 
-    // Carrega informações do profissional
+    // Carrega perfil
     await loadProfile(user.id);
 
 
@@ -48,7 +69,7 @@ async function initDashboard() {
 
 
 // ========================================
-// CARREGAR PERFIL DO PROFISSIONAL
+// CARREGAR PERFIL
 // ========================================
 
 async function loadProfile(userId) {
@@ -146,7 +167,6 @@ function renderStudents(list) {
     studentsGrid.innerHTML = "";
 
 
-    // Nenhum aluno encontrado
     if (list.length === 0) {
 
         studentsGrid.innerHTML = `
@@ -181,15 +201,14 @@ function createStudentCard(student) {
     card.className = "student-card";
 
 
-    // Primeira letra do nome
     const initial = student.full_name
         .trim()
         .charAt(0)
         .toUpperCase();
 
 
-    // Diagnósticos
-    let diagnosisText = "Sem diagnóstico informado";
+    let diagnosisText =
+        "Sem diagnóstico informado";
 
 
     if (
@@ -200,10 +219,14 @@ function createStudentCard(student) {
         diagnosisText = student.student_diagnoses
             .map(item => {
 
-                let diagnosis = item.diagnoses?.name || "";
+                let diagnosis =
+                    item.diagnoses?.name || "";
 
                 if (item.level) {
-                    diagnosis += ` - ${item.level}`;
+
+                    diagnosis +=
+                        ` - ${item.level}`;
+
                 }
 
                 return diagnosis;
@@ -218,7 +241,7 @@ function createStudentCard(student) {
     card.innerHTML = `
 
         <div class="student-avatar">
-            ${initial}
+            ${escapeHtml(initial)}
         </div>
 
         <div class="student-info">
@@ -236,13 +259,16 @@ function createStudentCard(student) {
     `;
 
 
-    // Ao clicar no aluno
-    card.addEventListener("click", function () {
+    // Abre a ficha do aluno
+    card.addEventListener(
+        "click",
+        function () {
 
-        window.location.href =
-            `aluno.html?id=${student.id}`;
+            window.location.href =
+                `aluno.html?id=${student.id}`;
 
-    });
+        }
+    );
 
 
     return card;
@@ -254,74 +280,84 @@ function createStudentCard(student) {
 // BUSCA DE ALUNOS
 // ========================================
 
-searchInput.addEventListener(
-    "input",
-    function () {
+if (searchInput) {
 
-        const search = searchInput.value
-            .trim()
-            .toLowerCase();
+    searchInput.addEventListener(
+        "input",
+        function () {
+
+            const search =
+                searchInput.value
+                    .trim()
+                    .toLowerCase();
 
 
-        if (!search) {
+            if (!search) {
 
-            renderStudents(students);
+                renderStudents(students);
 
-            return;
+                return;
+            }
+
+
+            const filtered =
+                students.filter(student =>
+                    student.full_name
+                        .toLowerCase()
+                        .includes(search)
+                );
+
+
+            renderStudents(filtered);
+
         }
+    );
 
-
-        const filtered = students.filter(student =>
-
-            student.full_name
-                .toLowerCase()
-                .includes(search)
-
-        );
-
-
-        renderStudents(filtered);
-
-    }
-);
+}
 
 
 // ========================================
 // LOGOUT
 // ========================================
 
-logoutButton.addEventListener(
-    "click",
-    async function () {
+if (logoutButton) {
 
-        const { error } =
-            await supabaseClient.auth.signOut();
+    logoutButton.addEventListener(
+        "click",
+        async function () {
+
+            const { error } =
+                await supabaseClient.auth.signOut();
 
 
-        if (error) {
+            if (error) {
 
-            console.error(
-                "Erro ao sair:",
-                error
-            );
+                console.error(
+                    "Erro ao sair:",
+                    error
+                );
 
-            return;
+                return;
+            }
+
+
+            window.location.href =
+                "index.html";
+
         }
+    );
 
-
-        window.location.href = "index.html";
-
-    }
-);
+}
 
 
 // ========================================
-// SEGURANÇA BÁSICA PARA TEXTO
+// SEGURANÇA PARA TEXTOS
 // ========================================
 
 function escapeHtml(text) {
 
-    const div = document.createElement("div");
+    const div =
+        document.createElement("div");
 
     div.textContent = text;
 
