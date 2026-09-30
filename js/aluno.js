@@ -33,7 +33,7 @@ const fullNameInput =
 const birthDateInput =
     document.getElementById("birth-date");
 
-const diagnosisSelect =
+const diagnosisInput =
     document.getElementById("diagnosis");
 
 const diagnosisLevelInput =
@@ -135,8 +135,6 @@ async function init() {
     studentSection.style.display =
         "none";
 
-    await loadDiagnoses();
-
 }
 
 
@@ -178,60 +176,6 @@ async function loadProfile(userId) {
 
     userRole.textContent =
         data.profession;
-
-}
-
-
-// ========================================
-// CARREGAR DIAGNÓSTICOS DISPONÍVEIS
-// ========================================
-
-async function loadDiagnoses() {
-
-    const { data, error } =
-        await supabaseClient
-            .from("diagnoses")
-            .select(
-                "id, name"
-            )
-            .order(
-                "name",
-                { ascending: true }
-            );
-
-
-    if (error) {
-
-        console.error(
-            "Erro ao carregar diagnósticos:",
-            error
-        );
-
-        return;
-    }
-
-
-    diagnosisSelect.innerHTML = `
-        <option value="">
-            Nenhum diagnóstico informado
-        </option>
-    `;
-
-
-    data.forEach(diagnosis => {
-
-        const option =
-            document.createElement("option");
-
-        option.value =
-            diagnosis.id;
-
-        option.textContent =
-            diagnosis.name;
-
-        diagnosisSelect.appendChild(option);
-
-    });
 
 }
 
