@@ -231,114 +231,110 @@
     <!-- FICHA DO ALUNO                     -->
     <!-- ================================= -->
 
-    <section id="student-section" style="display: none;">
+<section id="student-section" style="display: none;">
 
-        <div class="page-header">
+    <div class="page-header">
 
-            <div>
-
-                <button
-                    type="button"
-                    class="back-button"
-                    onclick="window.location.href='dashboard.html'">
-
-                    ← Voltar para alunos
-
-                </button>
-
-                <h1 id="student-name">
-                    Carregando...
-                </h1>
-
-                <p id="student-birth">
-                    Carregando informações...
-                </p>
-
-            </div>
+        <div>
 
             <button
                 type="button"
-                class="new-student-btn"
-                id="new-record-btn">
+                class="back-button"
+                onclick="window.location.href='dashboard.html'">
 
-                + Novo atendimento
+                ← Voltar para alunos
 
             </button>
+
+            <h1 id="student-name">
+                Carregando...
+            </h1>
+
+            <!-- DIAGNÓSTICO ABAIXO DO NOME -->
+            <p
+                id="student-diagnosis"
+                class="student-diagnosis">
+                Carregando diagnóstico...
+            </p>
+
+            <p id="student-birth">
+                Carregando informações...
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            class="new-student-btn"
+            id="new-record-btn">
+
+            + Novo atendimento
+
+        </button>
+
+    </div>
+
+
+    <!-- DADOS DO ALUNO -->
+
+    <section class="student-profile-card">
+
+        <div
+            class="profile-avatar"
+            id="student-avatar">
+
+            ?
 
         </div>
 
 
-        <!-- DADOS DO ALUNO -->
+        <div class="profile-main">
 
-        <section class="student-profile-card">
+            <h2 id="profile-name">
+                Carregando...
+            </h2>
 
-            <div class="profile-avatar" id="student-avatar">
-                ?
-            </div>
+            <p id="profile-birth">
+                —
+            </p>
 
-            <div class="profile-main">
+        </div>
 
-                <h2 id="profile-name">
-                    Carregando...
-                </h2>
+    </section>
 
-                <p id="profile-birth">
-                    —
+
+    <!-- HISTÓRICO -->
+
+    <section class="info-section">
+
+        <div class="section-title">
+
+            <div>
+
+                <h2>Histórico de atendimentos</h2>
+
+                <p>
+                    Todos os registros realizados pelos profissionais.
                 </p>
 
             </div>
 
-        </section>
+        </div>
 
 
+        <div
+            id="records-list"
+            class="records-list">
+
+            <div class="loading-message">
+                Carregando histórico...
             </div>
 
-
-            <div
-                id="diagnoses-list"
-                class="diagnoses-list">
-
-                <div class="loading-message">
-                    Carregando diagnósticos...
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- HISTÓRICO -->
-
-        <section class="info-section">
-
-            <div class="section-title">
-
-                <div>
-
-                    <h2>Histórico de atendimentos</h2>
-
-                    <p>
-                        Todos os registros realizados pelos profissionais.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="records-list"
-                class="records-list">
-
-                <div class="loading-message">
-                    Carregando histórico...
-                </div>
-
-            </div>
-
-        </section>
+        </div>
 
     </section>
+
+</section>
 
 </main>
 
