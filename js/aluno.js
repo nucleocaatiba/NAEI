@@ -53,6 +53,9 @@ const saveButton =
 const studentName =
     document.getElementById("student-name");
 
+const studentDiagnosis =
+    document.getElementById("student-diagnosis");
+
 const studentBirth =
     document.getElementById("student-birth");
 
@@ -466,7 +469,7 @@ async function loadStudent() {
 
 
 // ========================================
-// DIAGNÓSTICOS DO ALUNO
+// DIAGNÓSTICO DO ALUNO
 // ========================================
 
 async function loadStudentDiagnoses() {
@@ -494,97 +497,63 @@ async function loadStudentDiagnoses() {
     if (error) {
 
         console.error(
-            "Erro ao carregar diagnósticos:",
+            "Erro ao carregar diagnóstico:",
             error
         );
 
-        diagnosesList.innerHTML = `
-            <div class="loading-message">
-                Não foi possível carregar os diagnósticos.
-            </div>
-        `;
+        studentDiagnosis.textContent =
+            "";
 
         return;
     }
 
+
+    // Se o aluno não tiver diagnóstico,
+    // não mostra nada abaixo do nome.
 
     if (!data || data.length === 0) {
 
-        diagnosesList.innerHTML = `
-            <div class="empty-message">
-                Nenhum diagnóstico informado.
-            </div>
-        `;
+        studentDiagnosis.textContent =
+            "";
 
         return;
     }
 
 
-    diagnosesList.innerHTML = "";
+    // Pega o primeiro diagnóstico
+    const diagnosis =
+        data[0];
 
 
-    data.forEach(item => {
-
-        const card =
-            document.createElement("div");
-
-        card.className =
-            "diagnosis-card";
+    const name =
+        diagnosis.diagnoses?.name ||
+        "";
 
 
-        const name =
-            item.diagnoses?.name ||
-            "Diagnóstico";
+    const level =
+        diagnosis.level ||
+        "";
 
 
-        let details = "";
+    // Monta o texto
+    if (name && level) {
 
+        studentDiagnosis.textContent =
+            `${name} — ${level}`;
 
-        if (item.level) {
+    } else if (name) {
 
-            details +=
-                `<strong>${escapeHtml(item.level)}</strong>`;
+        studentDiagnosis.textContent =
+            name;
 
-        }
+    } else {
 
+        studentDiagnosis.textContent =
+            "";
 
-        if (item.notes) {
-
-            details +=
-                `<span>${escapeHtml(item.notes)}</span>`;
-
-        }
-
-
-        card.innerHTML = `
-
-            <div class="diagnosis-icon">
-                +
-            </div>
-
-            <div>
-
-                <h3>
-                    ${escapeHtml(name)}
-                </h3>
-
-                ${
-                    details
-                    ? `<p>${details}</p>`
-                    : ""
-                }
-
-            </div>
-
-        `;
-
-
-        diagnosesList.appendChild(card);
-
-    });
+    }
 
 }
-
 
 // ========================================
 // CARREGAR PRONTUÁRIOS
