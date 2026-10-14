@@ -180,156 +180,81 @@ async function loadProfile(userId) {
 }
 
 
-// ========================================
-// CADASTRAR ALUNO
-// ========================================
 
-form.addEventListener(
-    "submit",
-    async function(event) {
+ // ========================================
+ // CADASTRAR ALUNO
+ // ========================================
 
-        event.preventDefault();
+form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+    clearMessage();
 
-        clearMessage();
+    const fullName = fullNameInput.value.trim();
+    const birthDate = birthDateInput.value || null;
+    const diagnosis = diagnosisInput.value.trim() || null;
+    const diagnosisLevel = diagnosisLevelInput.value.trim() || null;
+    const notes = notesInput.value.trim() || null;
 
+    if (!fullName) {
+        showMessage("Digite o nome completo do aluno.", "error");
+        return;
+    }
 
-        const fullName =
-            fullNameInput.value.trim();
+    saveButton.disabled = true;
+    saveButton.textContent = "Salvando...";
 
-        const birthDate =
-            birthDateInput.value || null;
+    try {
+        // Verifica se o usuário está autenticado
+        const {
+            data: { user },
+            error: authError
+        } = await supabaseClient.auth.getUser();
 
-        const notes =
-            notesInput.value.trim() || null;
-
-        const diagnosisId =
-            diagnosisSelect.value || null;
-
-        const diagnosisLevel =
-            diagnosisLevelInput.value.trim() || null;
-
-
-        if (!fullName) {
-
-            showMessage(
-                "Digite o nome completo do aluno.",
-                "error"
-            );
-
-            return;
+        if (authError || !user) {
+            throw new Error("Sua sessão expirou. Faça login novamente.");
         }
 
-
-        saveButton.disabled = true;
-
-        saveButton.textContent =
-            "Salvando...";
-
-
-        try {
-
-            // Criar aluno
-            const {
-                data: student,
-                error: studentError
-            } = await supabaseClient
+        // Cadastra o aluno com o diagnóstico digitado
+        const { data: student, error: studentError } =
+            await supabaseClient
                 .from("students")
                 .insert({
                     full_name: fullName,
                     birth_date: birthDate,
+                    diagnosis: diagnosis,
+                    diagnosis_level: diagnosisLevel,
                     notes: notes
                 })
                 .select()
                 .single();
 
-
-            if (studentError) {
-
-                console.error(
-                    "Erro ao cadastrar aluno:",
-                    studentError
-                );
-
-                throw new Error(
-                    "Não foi possível cadastrar o aluno."
-                );
-            }
-
-
-            // Salvar diagnóstico
-            if (diagnosisId) {
-
-                const {
-                    error: diagnosisError
-                } = await supabaseClient
-                    .from("student_diagnoses")
-                    .insert({
-
-                        student_id:
-                            student.id,
-
-                        diagnosis_id:
-                            diagnosisId,
-
-                        level:
-                            diagnosisLevel
-
-                    });
-
-
-                if (diagnosisError) {
-
-                    console.error(
-                        "Erro ao salvar diagnóstico:",
-                        diagnosisError
-                    );
-
-                    throw new Error(
-                        "Aluno criado, mas houve um erro ao salvar o diagnóstico."
-                    );
-                }
-
-            }
-
-
-            showMessage(
-                "Aluno cadastrado com sucesso!",
-                "success"
+        if (studentError) {
+            console.error("Erro ao cadastrar aluno:", studentError);
+            throw new Error(
+                "Não foi possível cadastrar o aluno: " +
+                studentError.message
             );
-
-
-            setTimeout(
-                function() {
-
-                    window.location.href =
-                        `aluno.html?id=${student.id}`;
-
-                },
-                700
-            );
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            showMessage(
-                error.message ||
-                "Ocorreu um erro ao salvar o aluno.",
-                "error"
-            );
-
-
-            saveButton.disabled =
-                false;
-
-            saveButton.textContent =
-                "Salvar aluno";
-
         }
 
+        showMessage("Aluno cadastrado com sucesso!", "success");
+
+        setTimeout(function() {
+            window.location.href = `aluno.html?id=${student.id}`;
+        }, 700);
+
+    } catch (error) {
+        console.error("Erro no cadastro:", error);
+
+        showMessage(
+            error.message || "Ocorreu um erro ao salvar o aluno.",
+            "error"
+        );
+
+    } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = "Salvar aluno";
     }
-);
+});
 
 
 // ========================================
